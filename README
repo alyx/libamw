@@ -1,0 +1,15 @@
+ _ _ _
+| (_) |__   __ _ _ __ _____      __
+| | | '_ \ / _` | '_ ` _ \ \ /\ / /
+| | | |_) | (_| | | | | | \ V  V /
+|_|_|_.__/ \__,_|_| |_| |_|\_/\_/
+-----------------------------------
+
+Purpose: 
+        At various times, I code random things. libamw is an attempt to keep
+        them all bundled together for eventual possible reuse.
+
+Contents:
+        - amw_timer   - A nonblocking timer that works via SIGALARM
+        - amw_list    - A basic linked-list implementation
+        - amw_prng_ms - A Middle-Square PRNG implementation
