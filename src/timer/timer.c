@@ -1,7 +1,8 @@
 #include <time.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <unistd.h>
-#include "amw_timer.h"
+#include "timer.h"
 
 static amw_timer_list_t *events;
 static time_t next_event;
@@ -54,23 +55,35 @@ void amw_timer_check_events(void)
         if (event->runtime < shortest)
             shortest = event->runtime;
     }
-        if (shortest != next_event)
-            amw_timer_set_alarm(shortest);
+    if (shortest != next_event)
+        amw_timer_set_alarm(shortest);
 }     
 
 time_t amw_timer_add(amw_timer_function_t handle, void *udata, int8_t wait)
 {
-    amw_timer_event_t *event;
+    amw_timer_event_t *event, *listed;
+    amw_list_node *n;
     time_t runtime;
+    bool added;
     runtime = (time(NULL) + wait);
     event = malloc(sizeof(amw_timer_event_t));
     event->handle = handle;
     event->runtime = runtime;
     event->udata = udata;
 
-    amw_timer_list_add(events, &event);
-
-    amw_timer_check_events();
+    n = events->head;
+    for(n = event->head; ((n != NULL) && (added == false)); n = n->next)
+    {
+        listed = (amw_timer_event_t *)n->data;
+        if (event->runtime < listed->runtime)
+        {
+            amw_list_insert_before(listed, event);
+            added = true;
+            amw_timer_set_alarm(event->runtime);
+        }
+    }
+    if (added == false)
+        amw_list_append_node(events, event);
 
     return runtime;
 }
