@@ -19,21 +19,25 @@ static void amw_timer_handle_alarm(int signal)
     amw_timer_list_node *node;
     time_t now;
     now = time(NULL);
-    count = 0;
-    amw_timer_LIST_FOREACH(events, node)
+    for(node = events->head; node != NULL; node = node->next)
     {
         event = (amw_timer_event_t *)node->data;
         if (event->runtime <= now)
         {
             event->handle(event->udata);
-            count++;
+            /* XXX: Deal with repeat logic later.
             if (event->repeat == true)
                 event->runtime = (now + event->wait);
             else
+            */
                 amw_timer_del(node);
         }
+        else
+        {
+            amw_timer_set_alarm(event->runtime);
+            break;
+        }
     }
-    return count;
 }
 
 
@@ -59,7 +63,16 @@ void amw_timer_check_events(void)
         amw_timer_set_alarm(shortest);
 }     
 
-time_t amw_timer_add(amw_timer_function_t handle, void *udata, int8_t wait)
+void amw_timer_del(amw_list_node *n)
+{
+    amw_timer_event_t *event;
+    event = (amw_timer_event_t *)n->data;
+    free(event);
+    amw_list_del(events, n);
+}
+
+time_t amw_timer_add(amw_timer_function_t handle, void *udata, 
+        int8_t wait, bool repeat)
 {
     amw_timer_event_t *event, *listed;
     amw_list_node *n;
@@ -68,6 +81,8 @@ time_t amw_timer_add(amw_timer_function_t handle, void *udata, int8_t wait)
     runtime = (time(NULL) + wait);
     event = malloc(sizeof(amw_timer_event_t));
     event->handle = handle;
+    event->repeat = repeat;
+    event->wait = wait;
     event->runtime = runtime;
     event->udata = udata;
 
@@ -84,6 +99,8 @@ time_t amw_timer_add(amw_timer_function_t handle, void *udata, int8_t wait)
     }
     if (added == false)
         amw_list_append_node(events, event);
+    if (!(next_event))
+        amw_timer_set_alarm(event->runtime);
 
     return runtime;
 }
