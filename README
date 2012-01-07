@@ -13,3 +13,4 @@ Contents:
         - amw_timer   - A nonblocking timer that works via SIGALARM
         - amw_list    - A basic linked-list implementation
         - amw_prng_ms - A Middle-Square PRNG implementation
+        - amw_validate_luhn - A Luhn-algorithm number validator
