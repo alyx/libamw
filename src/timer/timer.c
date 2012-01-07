@@ -65,8 +65,20 @@ void amw_timer_check_events(void)
 
 void amw_timer_del(amw_list_node *n)
 {
-    amw_timer_event_t *event;
+    amw_list_node *tn;
+    amw_timer_event_t *event, *next;
     event = (amw_timer_event_t *)n->data;
+    if (event->runtime == next_event)
+    {
+        if (n->next != NULL)
+        {
+            tn = n->next;
+            amw_timer_set_alarm((*(amw_timer_set_alarm *)tn->data)->runtime);
+        }
+        else
+            amw_timer_set_alarm(0);
+    }
+            
     free(event);
     amw_list_del(events, n);
 }
