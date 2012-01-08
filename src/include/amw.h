@@ -7,6 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "crypto.h"
 #include "list.h"
 #include "misc.h"
 #include "prng.h"
