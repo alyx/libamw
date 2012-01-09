@@ -2,7 +2,7 @@
 
 static inline void switch_bytes(unsigned char *a, unsigned char *b)
 {
-    unsigned char *temp;
+    unsigned char temp;
 
     temp = *a;
     *a = *b;
@@ -12,8 +12,8 @@ static inline void switch_bytes(unsigned char *a, unsigned char *b)
 void amw_arc4_init(struct amw_arc4_state *state, 
         const char *key, size_t keylen)
 {
-    register unsigned char j;
-    register int i;
+    int i;
+    unsigned char j;
 
     for (i = 0; i < 256; i++)
         state->state[i] = (unsigned char)i;
@@ -33,7 +33,7 @@ void amw_arc4_crypt(struct amw_arc4_state *state, const unsigned char *in,
     int i;
     unsigned char j;
 
-    for (i = 0; i < buflen; i++)
+    for (i = 0; i < (int)buflen; i++)
     {
         state->index[0]++;
         state->index[1] += state->state[state->index[0]];
