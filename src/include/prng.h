@@ -1,7 +1,9 @@
 #ifndef __AMW_PRNG_H
 #define __AMW_PRNG_H
 
-void amw_prng_ms_init(uint32_t seed);
-uint16_t amw_prng_ms_get(void);
+static inline uint16_t amw_prng_ms_get(uint32_t seed)
+{
+    return (seed >> 8) & 0xffff;
+}
 
 #endif /* __AMW_PRNG_H */
